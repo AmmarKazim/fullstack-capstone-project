@@ -9,6 +9,7 @@ import giftRoutes from './routes/giftRoutes.js'; // Task 1: Import giftRoutes
 import searchRoutes from './routes/searchRoutes.js'; // Import searchRoutes
 import pinoHttp from 'pino-http';
 import logger from './logger.js'; // Adjust the path if necessary
+import authRoutes from './routes/authRoutes.js'
 
 const app = express();
 app.use("*", cors());
@@ -37,6 +38,7 @@ app.use('/api/gifts', giftRoutes); // Task 2: Use giftRoutes
 
 // Search API Task 2: add the searchRoutes to the server by using the app.use() method.
 app.use('/api/search', searchRoutes);
+app.use('/api/auth', authRoutes)
 
 // Global Error Handler
 app.use((err, req, res, next) => {
