@@ -7,7 +7,7 @@ import { dirname, join } from 'path';
 
 // MongoDB connection URL with authentication options
 dotenv.config();
-let url = `${process.env.MONGO_URL}`;
+let url = process.env.MONGO_URL;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 let filename = join(__dirname, 'gifts.json');
@@ -51,6 +51,4 @@ async function loadData() {
 
 loadData();
 
-export default {
-    loadData,
-  };
+export { loadData };

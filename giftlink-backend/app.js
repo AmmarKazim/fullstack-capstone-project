@@ -2,7 +2,7 @@
 import express, { json } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { info } from './logger.js'; // Adjust the path if necessary
+
 import connectToDatabase from './models/db.js'; // Adjust the path if necessary
 import { loadData } from "./util/import-mongo/index.js"; // Adjust the path if necessary
 import giftRoutes from './routes/giftRoutes.js'; // Task 1: Import giftRoutes
@@ -17,7 +17,7 @@ const port = 3060;
 
 // Connect to MongoDB; we just do this one time
 connectToDatabase().then(() => {
-    info('Connected to DB');
+    console.log('Connected to DB');
 }).catch((e) => console.error('Failed to connect to DB', e));
 
 app.use(json());
