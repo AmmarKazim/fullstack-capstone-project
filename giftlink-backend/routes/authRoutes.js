@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 import { Router } from 'express';
 import { genSalt, hash as _hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';

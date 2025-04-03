@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 import dotenv from 'dotenv';
 import express, { json } from 'express';
 import axios from 'axios';

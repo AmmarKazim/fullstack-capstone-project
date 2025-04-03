@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 import pino from 'pino';
 
 let logger;

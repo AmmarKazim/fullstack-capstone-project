@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 // index.js
 import { MongoClient } from 'mongodb';
 import { readFileSync } from 'fs';

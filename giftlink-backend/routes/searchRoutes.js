@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 // searchRoutes.js
 import express from 'express';
 import connectToDatabase from '../models/db.js'; // Adjust the path if necessary

@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 // db.js
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
