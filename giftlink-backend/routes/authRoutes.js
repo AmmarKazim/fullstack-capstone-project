@@ -2,13 +2,16 @@ import { Router } from 'express';
 import { genSalt, hash as _hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import connectToDatabase from '../models/db';
+import dotenv from 'dotenv';
 import pino from 'pino';  // Import Pino logger
-import dotenv from 'dotenv'
+
+//Task 1: Use the `body`,`validationResult` from `express-validator` for input validation
+import { body, validationResult } from 'express-validator';
 
 const router = Router();
+
 const logger = pino();  // Create a Pino logger instance
 
-//Create JWT secret
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -16,11 +19,7 @@ router.post('/register', async (req, res) => {
     try {
       //Connect to `giftsdb` in MongoDB through `connectToDatabase` in `db.js`.
       const db = await connectToDatabase();
-
-      //Access the `users` collection
       const collection = db.collection("users");
-
-      //Check for existing email in DB
       const existingEmail = await collection.findOne({ email: req.body.email });
 
         if (existingEmail) {
@@ -31,8 +30,7 @@ router.post('/register', async (req, res) => {
         const salt = await genSalt(10);
         const hash = await _hash(req.body.password, salt);
         const email=req.body.email;
-
-        //Save user details
+        console.log('email is',email);
         const newUser = await collection.insertOne({
             email: req.body.email,
             firstName: req.body.firstName,
@@ -47,7 +45,6 @@ router.post('/register', async (req, res) => {
             },
         };
 
-        //Create JWT
         const authtoken = sign(payload, JWT_SECRET);
         logger.info('User registered successfully');
         res.json({ authtoken,email });
@@ -57,7 +54,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-    //Login Endpoint
 router.post('/login', async (req, res) => {
     console.log("\n\n Inside login")
 
@@ -95,4 +91,62 @@ router.post('/login', async (req, res) => {
       }
 });
 
+// update API
+router.put('/update', async (req, res) => {
+    // Task 2: Validate the input using `validationResult` and return approiate message if there is an error.
+
+    const errors = validationResult(req);
+
+    // Task 3: Check if `email` is present in the header and throw an appropriate error message if not present.
+    if (!errors.isEmpty()) {
+        logger.error('Validation errors in update request', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const email = req.headers.email;
+
+        if (!email) {
+            logger.error('Email not found in the request headers');
+            return res.status(400).json({ error: "Email not found in the request headers" });
+        }
+
+        //Task 4: Connect to MongoDB
+        const db = await connectToDatabase();
+        const collection = db.collection("users");
+
+        //Task 5: Find user credentials
+        const existingUser = await collection.findOne({ email });
+
+        if (!existingUser) {
+            logger.error('User not found');
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        existingUser.firstName = req.body.name;
+        existingUser.updatedAt = new Date();
+
+        //Task 6: Update user credentials in DB
+        const updatedUser = await collection.findOneAndUpdate(
+            { email },
+            { $set: existingUser },
+            { returnDocument: 'after' }
+        );
+
+        //Task 7: Create JWT authentication with user._id as payload using secret key from .env file
+        const payload = {
+            user: {
+                id: updatedUser._id.toString(),
+            },
+        };
+
+        const authtoken = sign(payload, JWT_SECRET);
+        logger.info('User updated successfully');
+
+        res.json({ authtoken });
+    } catch (error) {
+        logger.error(error);
+        return res.status(500).send("Internal Server Error");
+    }
+});
 export default router;
