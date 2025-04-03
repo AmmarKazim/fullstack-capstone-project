@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 // giftRoutes.js
 import express from 'express';
 import { ObjectId } from 'mongodb';
