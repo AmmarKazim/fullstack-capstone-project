@@ -1,8 +1,8 @@
 /*jshint esversion: 8 */
 import { Router } from 'express';
 import { genSalt, hash as _hash, compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import connectToDatabase from '../models/db';
+import jwt from 'jsonwebtoken';
+import connectToDatabase from '../models/db.js';
 import dotenv from 'dotenv';
 import pino from 'pino';  // Import Pino logger
 
@@ -46,7 +46,7 @@ router.post('/register', async (req, res) => {
             },
         };
 
-        const authtoken = sign(payload, JWT_SECRET);
+        const authtoken = jwt.sign(payload, JWT_SECRET);
         logger.info('User registered successfully');
         res.json({ authtoken,email });
     } catch (e) {
